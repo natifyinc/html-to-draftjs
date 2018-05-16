@@ -30,14 +30,9 @@ class Playground extends Component {
   }
 
   onInputEditorChange = (inputEditorState) => {
-    console.log('into onInputEditorChange')
-    // console.log('*****', inputEditorState.getCurrentContent())
     const rawContent = convertToRaw(inputEditorState.getCurrentContent());
     const html = draftToHtml(rawContent);
-    console.log('html', html)
     const contentBlock = htmlToDraft(html);
-//    console.log('1', contentBlock)
-    // console.log('2', convertFromHTML(html) && convertFromHTML(html))
     if (contentBlock) {
       const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
       const outputEditorState = EditorState.createWithContent(contentState);
@@ -45,13 +40,10 @@ class Playground extends Component {
         inputEditorState,
         outputEditorState,
       });
-      // console.log('1', inputEditorState.getCurrentContent().getBlocksAsArray())
-      // console.log('2', contentBlock.contentBlocks)
     }
   }
 
   render() {
-    // console.log('*****', this.state.inputEditorState.getCurrentContent())
     // value={this.state.inputEditorState && draftToHtml(convertToRaw(this.state.inputEditorState.getCurrentContent()))}
     return (
       <div>
