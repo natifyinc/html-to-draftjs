@@ -10,6 +10,7 @@ import {
   getBlockDividerChunk,
   getFirstBlockChunk,
   getAtomicBlockChunk,
+  getUnstyledBlockChunk,
   joinChunks,
 } from './chunkBuilder';
 import getBlockTypeForTag from './getBlockTypeForTag';
@@ -33,7 +34,6 @@ function genFragment(
   customChunkGenerator: ?CustomChunkGenerator,
 ): Object {
   const nodeName = node.nodeName.toLowerCase();
-
   if (customChunkGenerator) {
     const value = customChunkGenerator(nodeName, node);
     if (value) {
@@ -44,6 +44,22 @@ function genFragment(
       );
       return { chunk: getAtomicBlockChunk(entityId) };
     }
+  }
+  if (nodeName === 'div' &&
+    node instanceof HTMLDivElement
+  ) {
+    const entityConfig = {};
+    entityConfig.ctaTitle = node.getElementsByTagName('H3')[0].innerHTML;
+    entityConfig.ctaText = node.getElementsByTagName('P')[0].innerHTML;
+    entityConfig.ctaButtonText = node.getElementsByTagName('A')[0].innerHTML;
+    entityConfig.url = node.getElementsByTagName('A')[0].getAttribute('href');
+    entityConfig.targetOption = node.getElementsByTagName('A')[0].getAttribute('target');
+    const entityId = Entity.__create(
+      'CTA_BOX',
+      'MUTABLE',
+      entityConfig,
+    );
+    return { chunk: getAtomicBlockChunk(entityId) };
   }
 
   if (nodeName === '#text' && node.textContent !== '\n') {

@@ -84,6 +84,19 @@ export const getAtomicBlockChunk = (entityId: number): Object => {
   };
 };
 
+export const getUnstyledBlockChunk = (entityId: number): Object => {
+  return {
+    text: '\r ',
+    inlines: [new OrderedSet()],
+    entities: [entityId],
+    blocks: [{
+      type: 'unstyled',
+      depth: 0,
+      data: new Map({})
+    }],
+  };
+};
+
 export const joinChunks = (A: Object, B: Object): Object => {
   return {
     text: A.text + B.text,
