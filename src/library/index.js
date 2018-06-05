@@ -10,7 +10,6 @@ import {
   getBlockDividerChunk,
   getFirstBlockChunk,
   getAtomicBlockChunk,
-  getUnstyledBlockChunk,
   joinChunks,
 } from './chunkBuilder';
 import getBlockTypeForTag from './getBlockTypeForTag';
@@ -34,6 +33,7 @@ function genFragment(
   customChunkGenerator: ?CustomChunkGenerator,
 ): Object {
   const nodeName = node.nodeName.toLowerCase();
+
   if (customChunkGenerator) {
     const value = customChunkGenerator(nodeName, node);
     if (value) {
@@ -45,6 +45,7 @@ function genFragment(
       return { chunk: getAtomicBlockChunk(entityId) };
     }
   }
+
   if (nodeName === 'div' &&
     node instanceof HTMLDivElement
   ) {
@@ -56,6 +57,28 @@ function genFragment(
     entityConfig.targetOption = node.getElementsByTagName('A')[0].getAttribute('target');
     const entityId = Entity.__create(
       'CTA_BOX',
+      'MUTABLE',
+      entityConfig,
+    );
+    return { chunk: getAtomicBlockChunk(entityId) };
+  }
+
+  if (nodeName === 'a' &&
+    node instanceof HTMLAnchorElement &&
+    node.id === 'ctaimage-root'
+  ) {
+    const image = node.getElementsByTagName('img')[0];
+    const entityConfig = {};
+    entityConfig.src = image.getAttribute ? image.getAttribute('src') || image.src : image.src;
+    entityConfig.alt = image.alt;
+    entityConfig.height = image.style.height;
+    entityConfig.width = image.style.width;
+    if (image.style.float) {
+      entityConfig.alignment = image.style.float;
+    }
+    entityConfig.linkUrl = node.href;
+    const entityId = Entity.__create(
+      'CTA_IMAGE',
       'MUTABLE',
       entityConfig,
     );
