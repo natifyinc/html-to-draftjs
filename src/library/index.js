@@ -46,6 +46,45 @@ function genFragment(
     }
   }
 
+  if (nodeName === 'div' &&
+    node instanceof HTMLDivElement
+  ) {
+    const entityConfig = {};
+    entityConfig.ctaTitle = node.getElementsByTagName('H3')[0].innerHTML;
+    entityConfig.ctaText = node.getElementsByTagName('P')[0].innerHTML;
+    entityConfig.ctaButtonText = node.getElementsByTagName('A')[0].innerHTML;
+    entityConfig.url = node.getElementsByTagName('A')[0].getAttribute('href');
+    entityConfig.targetOption = node.getElementsByTagName('A')[0].getAttribute('target');
+    const entityId = Entity.__create(
+      'CTA_BOX',
+      'MUTABLE',
+      entityConfig,
+    );
+    return { chunk: getAtomicBlockChunk(entityId) };
+  }
+
+  if (nodeName === 'a' &&
+    node instanceof HTMLAnchorElement &&
+    node.id === 'ctaimage-root'
+  ) {
+    const image = node.getElementsByTagName('img')[0];
+    const entityConfig = {};
+    entityConfig.src = image.getAttribute ? image.getAttribute('src') || image.src : image.src;
+    entityConfig.alt = image.alt;
+    entityConfig.height = image.style.height;
+    entityConfig.width = image.style.width;
+    if (image.style.float) {
+      entityConfig.alignment = image.style.float;
+    }
+    entityConfig.linkUrl = node.href;
+    const entityId = Entity.__create(
+      'CTA_IMAGE',
+      'MUTABLE',
+      entityConfig,
+    );
+    return { chunk: getAtomicBlockChunk(entityId) };
+  }
+
   if (nodeName === '#text' && node.textContent !== '\n') {
     return createTextChunk(node, inlineStyle, inEntity);
   }
